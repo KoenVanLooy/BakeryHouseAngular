@@ -1,0 +1,32 @@
+<blockquote class="blockquote ml-5">
+    <h1>All Orders</h1>
+    <footer class="blockquote-footer">
+            BakeryHouse Orderlistener
+    </footer>
+</blockquote>
+<div class="row">
+    <div class="col mx-2"><p>Afhaalpunt<p></div>
+    <div class="col mx-2"><p>Orderdatum</p></div>
+    <div class="col mx-2"><p>Leverdatum</p></div>
+    <div class="col mx-2"><p>Klant</p></div>
+    <div class="col mx-2"> <button class="btn btn-outline-success" (click)="addOrderForm()"><i class="fa fa-plus"></i> new Order</button></div>
+    <div class="col"><span *ngIf="notification" class="elementToFadeInAndOut">
+            <i class="fas fa-check-circle {{notification.class}}"></i>
+            {{notification.message}}
+    </span></div>
+</div>
+<form [formGroup]="fg" *ngFor="let fg of orderForms.controls; let i = index" (submit)="recordSubmit(fg)">
+    <div class="row my-1">
+         <select class="form-control form-select col mx-2" formControlName="afhaalpuntId">
+             <option value="0">--Select--</option>
+             <option *ngFor="let item of orderList" value="{{item.orderId}}" >{{item.orderId}}</option>
+         </select>
+         <input class="form-control col mx-2" formControlName="orderDatum"  type="date" value="{{fg.get('orderDatum')}}">
+         <input class="form-control col mx-2" formControlName="leverDatum" type="date">
+         <input class="form-control col mx-2" formControlName="klantId">
+         <button class="btn col mx-2" [ngClass]="(fg.get('orderId').value==0)?'btn-success':'btn-outline-primary'" type="submit" [disabled]="fg.invalid"
+         ><i class="far fa-save fa-lg"></i> {{fg.get('orderId').value==0?'Submit':'Edit'}}</button>
+         <button class="btn col btn-outline-danger" (click)="onDelete(fg.get('orderId').value,i)"><i class="far fa-trash-alt fa-lg"></i></button>    
+    </div>
+</form>
+   

@@ -1,1 +1,17 @@
 /* You can add global styles to this file, and also import other style files */
+input.ng-invalid.ng-touched,select.ng-invalid.ng-touched{
+    border-color: red;
+}
+
+.elementToFadeInAndOut{
+    -webkit-animation: fadeinout 2s linear forwards;
+    animation: fadeinout  2s linear forwards;
+    opacity: 0;
+}
+
+@-webkit-keyframes fadeinout{
+    50% { opacity: 1;}
+}
+@keyframes fadeinout{
+    50%{opacity: 1;}
+}
