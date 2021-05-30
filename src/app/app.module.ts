@@ -8,7 +8,6 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { OrderModule } from './order/order.module';
 import { HomeComponent } from './home/home.component';
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
-import { ApplistComponent } from './applist/applist.component';
 import { LoginComponent } from './login/login.component';
 import { AuthGuard } from './_helpers/auth-guard';
 import { ErrorInterceptor } from './_helpers/error-interceptor';
@@ -19,7 +18,6 @@ import { JwtInterceptor } from './_helpers/jwt-interceptor';
   declarations: [
     AppComponent,
     HomeComponent,
-    ApplistComponent,
     LoginComponent
   ],
   imports: [

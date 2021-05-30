@@ -1,9 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder,FormArray, Validators, FormGroup } from '@angular/forms';
 import { Afhaalpunt } from '../_models/afhaalpunt';
+import { Klant } from '../_models/klant';
 import { Order } from "../_models/order";
 import { AfhaalpuntService } from '../_services/afhaalpunt.service';
+import { KlantService } from '../_services/klant.service';
 import { OrderService } from '../_services/order.service';
+import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
+import { ProductService } from '../_services/product.service';
+import { Product } from '../_models/product';
+import { Orderlijn } from '../_models/orderlijn';
 @Component({
   selector: 'app-order-list',
   templateUrl: './order-list.component.html',
@@ -13,17 +19,24 @@ export class OrderListComponent implements OnInit {
 
   public Orders: Order[];
   public Afhaalpunten: Afhaalpunt[];
+  public Klanten: Klant[];
+  public Producten: Product[];
+  dropdownList = [];
+  selectedItems = [];
+  dropdownSettings = {};
   orderForms : FormArray = this.fb.array([]);
   notification = null;
-  constructor(private fb: FormBuilder, private _orderService:OrderService, private _afhaalpuntService:AfhaalpuntService) 
+  constructor(private fb: FormBuilder, private _orderService:OrderService, private _afhaalpuntService:AfhaalpuntService, 
+    private _klantService:KlantService, private _productService:ProductService) 
   { 
-
   }
 
   ngOnInit(): void {
     this._orderService.getOrders().subscribe((results) => this.Orders = results);
     this._afhaalpuntService.getAfhaalpunten().subscribe((results)=> this.Afhaalpunten = results);
-
+    this._klantService.getKlanten().subscribe((results) => this.Klanten = results);
+    this._productService.getProducten().subscribe((results) => this.Producten = results);
+    
     this._orderService.getOrders().subscribe(
       res => {
         if(res == []){
@@ -32,17 +45,34 @@ export class OrderListComponent implements OnInit {
           (res as []).forEach( (order : Order)=>{
             let leverDate = order.leverDatum.split('T')[0];
             let orderDate = order.orderdatum.split('T')[0];
+            let selectedProduct = [];
+            order.orderlijnen.forEach((orderlijn:Orderlijn)=>{selectedProduct.push(orderlijn.product)});
+            
             this.orderForms.push(this.fb.group({
               orderId : [order.orderId],
               afhaalpuntId:[order.afhaalpuntId,Validators.min(1)],
               orderDatum:[orderDate,Validators.required],
               leverDatum:[leverDate,Validators.required],
-              klantId:[order.klantId,Validators.required]
+              klantId:[order.klantId,Validators.required],
+              orderlijnen:[selectedProduct]
             }));
           });
         }
       }
     );
+
+    this.dropdownList = this.Producten;
+    
+    this.dropdownSettings = {
+      singleSelection: false,
+      idField: 'productId',
+      textField: 'naam',
+      selectAllText: 'Select All',
+      unSelectAllText: 'UnSelect All',
+      itemsShowLimit: 3,
+      allowSearchFilter: true
+    };
+
   }
 
   addOrderForm(){
@@ -51,8 +81,8 @@ export class OrderListComponent implements OnInit {
       afhaalpuntId:[0,Validators.min(1)],
       orderDatum:['',Validators.required],
       leverDatum:['',Validators.required],
-      klantId:['',Validators.min(1)]
-
+      klantId:[0,Validators.min(1)],
+      orderlijnen:[]
     }));
   }
 
@@ -95,5 +125,15 @@ export class OrderListComponent implements OnInit {
         break;
     }
     setTimeout(()=>{this.notification = null},3000);
+  }
+
+  onItemSelect(item: any) {
+    console.log(item);
+  }
+  onSelectAll(items: any) {
+    console.log(items);
+  }
+  onItemDeselect(item: any){
+    console.log(item);
   }
 }

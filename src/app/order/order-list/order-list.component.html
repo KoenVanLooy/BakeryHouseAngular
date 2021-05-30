@@ -15,7 +15,8 @@
             {{notification.message}}
     </span></div>
 </div>
-<form [formGroup]="fg" *ngFor="let fg of orderForms.controls; let i = index" (submit)="recordSubmit(fg)">
+<div class="my-4"> 
+<form [formGroup]="fg" *ngFor="let fg of orderForms.controls; let i = index" (submit)="recordSubmit(fg)" class="my-2">
     <div class="row my-1">
          <select class="form-control form-select col mx-2" formControlName="afhaalpuntId">
              <option value="0" Selected>--Select--</option>
@@ -23,9 +24,22 @@
          </select>
          <input class="form-control col mx-2" formControlName="orderDatum"  type="date">
          <input class="form-control col mx-2" formControlName="leverDatum" type="date">
-         <input class="form-control col mx-2" formControlName="klantId">
+         <select class="form-control form-select col mx-2" formControlName="klantId">
+            <option value="0" Selected>--Select--</option>
+            <option *ngFor="let item of Klanten" value="{{item.klantId}}" >{{item.voornaam}}</option>
+        </select>
          <button class="btn col mx-2" [ngClass]="(fg.get('orderId').value==0)?'btn-success':'btn-outline-primary'" type="submit" [disabled]="fg.invalid"
          ><i class="far fa-save fa-lg"></i> {{fg.get('orderId').value==0?'Submit':'Edit'}}</button>
-         <button class="btn col btn-outline-danger" (click)="onDelete(fg.get('orderId').value,i)"><i class="far fa-trash-alt fa-lg"></i></button>    
+         <button class="btn col btn-outline-danger" (click)="onDelete(fg.get('orderId').value,i)"><i class="far fa-trash-alt fa-lg"></i></button> 
+         <ng-multiselect-dropdown formControlName="orderlijnen"
+         [placeholder]="'Producten'"
+         [settings]="dropdownSettings"
+         [data]="Producten"
+         (onSelect)="onItemSelect($event)"
+         (onDeSelect)="onItemDeselect($event)"
+         (onSelectAll)="onSelectAll($event)"
+       >
+       </ng-multiselect-dropdown>
     </div>
 </form>
+</div>
